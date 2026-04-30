@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentary Film in DaVinci Resolve — ATS 9th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f4f2ee;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* HERO */
+  .hero {
+    background: #0a0a0a;
+    border-radius: 20px;
+    padding: 3rem 2.5rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .film-strip {
+    position: absolute; top: 0; left: 0; right: 0; height: 20px;
+    background: repeating-linear-gradient(90deg,#1e1e1e 0px,#1e1e1e 16px,#0a0a0a 16px,#0a0a0a 22px);
+  }
+  .film-strip::before {
+    content:''; position:absolute; top:4px; height:12px; left:0; right:0;
+    background: repeating-linear-gradient(90deg,transparent 0,transparent 11px,#0a0a0a 11px,#0a0a0a 16px,transparent 16px,transparent 27px);
+  }
+  .film-strip-bottom {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 20px;
+    background: repeating-linear-gradient(90deg,#1e1e1e 0px,#1e1e1e 16px,#0a0a0a 16px,#0a0a0a 22px);
+  }
+  .film-strip-bottom::before {
+    content:''; position:absolute; top:4px; height:12px; left:0; right:0;
+    background: repeating-linear-gradient(90deg,transparent 0,transparent 11px,#0a0a0a 11px,#0a0a0a 16px,transparent 16px,transparent 27px);
+  }
+  .hero-glow {
+    position:absolute; top:-80px; right:-80px; width:340px; height:340px;
+    border-radius:50%; background:radial-gradient(circle,rgba(220,80,20,0.2) 0%,transparent 70%); pointer-events:none;
+  }
+  .hero-glow2 {
+    position:absolute; bottom:-60px; left:-60px; width:260px; height:260px;
+    border-radius:50%; background:radial-gradient(circle,rgba(255,140,0,0.10) 0%,transparent 70%); pointer-events:none;
+  }
+  .lens-ring {
+    position:absolute; right:2.5rem; top:50%; transform:translateY(-50%);
+    width:110px; height:110px; border-radius:50%;
+    border:2px solid rgba(220,80,20,0.22);
+    display:flex; align-items:center; justify-content:center; opacity:0.55;
+  }
+  .lens-ring::before {
+    content:''; width:72px; height:72px; border-radius:50%;
+    border:1.5px solid rgba(220,80,20,0.32);
+  }
+  .hero-inner { position:relative; z-index:2; padding-top:0.5rem; max-width: calc(100% - 140px); }
+  .hero-tag {
+    font-size: 11px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase;
+    color:#DC5014; margin-bottom:0.75rem;
+    display:flex; align-items:center; gap:10px;
+  }
+  .hero-tag::before { content:''; display:inline-block; width:22px; height:1px; background:#DC5014; flex-shrink:0; }
+  .hero-title {
+    font-family:'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 7vw, 68px);
+    line-height:0.93; color:#fff; letter-spacing:0.02em;
+    margin-bottom:0.75rem;
+  }
+  .hero-title span { color:#DC5014; }
+  .hero-sub { font-size:14px; color:rgba(255,255,255,0.42); margin-bottom:1.5rem; line-height:1.5; }
+  .pills { display:flex; gap:8px; flex-wrap:wrap; }
+  .pill {
+    background:rgba(255,255,255,0.07); border:0.5px solid rgba(255,255,255,0.13);
+    border-radius:20px; padding:5px 14px; font-size:12px; color:rgba(255,255,255,0.72);
+  }
+  .pill.accent { background:rgba(220,80,20,0.16); border-color:rgba(220,80,20,0.45); color:#FF8C42; }
+
+  /* INFO CARDS */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .info-card { background:#fff; border-radius:12px; padding:1rem 1.25rem; border:0.5px solid rgba(0,0,0,0.07); }
+  .info-card .lbl { font-size:11px; color:#888; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
+  .info-card .val { font-size:17px; font-weight:500; }
+
+  /* SECTION */
+  .section-card { background:#fff; border-radius:16px; padding:1.5rem; border:0.5px solid rgba(0,0,0,0.07); }
+  .section-label { font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:#888; margin-bottom:1rem; }
+
+  /* SKILLS */
+  .skills-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .skill-card { background:#f9f8f5; border:0.5px solid rgba(0,0,0,0.07); border-radius:10px; padding:1rem; }
+  .skill-icon { font-size:18px; margin-bottom:8px; }
+  .skill-name { font-size:14px; font-weight:500; margin-bottom:2px; }
+  .skill-desc { font-size:12px; color:#777; }
+  .skill-card.highlight { background:#EEEDFE; border-color:#AFA9EC; }
+  .skill-card.highlight .skill-name { color:#3C3489; }
+  .skill-card.highlight .skill-desc { color:#534AB7; }
+
+  /* TOPICS */
+  .topics-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; }
+  .topic-card { background:#f9f8f5; border:0.5px solid rgba(0,0,0,0.08); border-radius:10px; padding:1rem; }
+  .topic-card.free { border-style:dashed; }
+  .topic-num { font-size:11px; font-weight:500; color:#999; margin-bottom:4px; }
+  .topic-title { font-size:14px; font-weight:500; margin-bottom:5px; }
+  .topic-desc { font-size:12px; color:#777; line-height:1.55; }
+
+  /* REQUIREMENTS */
+  .reqs-list { list-style:none; display:flex; flex-direction:column; gap:10px; }
+  .req-item { display:flex; align-items:flex-start; gap:12px; font-size:14px; line-height:1.6; }
+  .req-dot { width:7px; height:7px; border-radius:50%; background:#1a1a1a; flex-shrink:0; margin-top:7px; }
+  .req-dot.purple { background:#534AB7; }
+
+  /* FUSION BOX */
+  .fusion-box { background:#EEEDFE; border:0.5px solid #AFA9EC; border-radius:16px; padding:1.5rem; }
+  .fusion-header { display:flex; align-items:center; gap:10px; margin-bottom:1rem; }
+  .fusion-badge { background:#534AB7; color:#fff; font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:4px 12px; border-radius:20px; white-space:nowrap; }
+  .fusion-title { font-size:15px; font-weight:500; color:#26215C; }
+  .fusion-desc { font-size:13px; color:#534AB7; margin-bottom:1.25rem; line-height:1.7; }
+  .sub-label { font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:#534AB7; margin-bottom:0.75rem; }
+  .fusion-steps { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:1.25rem; }
+  .fusion-step { display:flex; align-items:flex-start; gap:12px; font-size:13px; color:#3C3489; line-height:1.6; }
+  .step-num { background:#534AB7; color:#fff; font-size:11px; font-weight:500; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+  .tut-link { background:#fff; border:0.5px solid #AFA9EC; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; text-decoration:none; transition: border-color 0.15s; }
+  .tut-link:hover { border-color:#534AB7; }
+  .yt-sm { width:32px; height:32px; background:#FF0000; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .yt-sm-play { width:0; height:0; border-top:7px solid transparent; border-bottom:7px solid transparent; border-left:11px solid white; margin-left:2px; }
+  .tut-title { font-size:13px; font-weight:500; color:#26215C; margin-bottom:2px; }
+  .tut-who { font-size:11px; color:#534AB7; }
+
+  /* RUBRIC */
+  .rubric-list { display:flex; flex-direction:column; gap:8px; }
+  .rubric-item { display:flex; align-items:center; gap:12px; background:#f9f8f5; border-radius:10px; padding:12px 16px; font-size:14px; }
+  .rubric-dot { width:8px; height:8px; border-radius:50%; background:#bbb; flex-shrink:0; }
+
+  /* RESOURCES */
+  .resources-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; }
+  .res-card { background:#f9f8f5; border:0.5px solid rgba(0,0,0,0.07); border-radius:12px; padding:1.1rem; }
+  .res-category { font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:3px 10px; border-radius:20px; display:inline-block; margin-bottom:10px; }
+  .cat-music { background:#E1F5EE; color:#0F6E56; }
+  .cat-lut { background:#EEEDFE; color:#3C3489; }
+  .cat-sfx { background:#FAEEDA; color:#633806; }
+  .cat-footage { background:#FAECE7; color:#712B13; }
+  .res-name { font-size:13px; font-weight:500; margin-bottom:2px; }
+  .res-desc { font-size:11px; color:#888; margin-bottom:4px; line-height:1.5; }
+  .res-link { font-size:11px; color:#185FA5; text-decoration:none; }
+  .res-link:hover { text-decoration:underline; }
+  .res-block { margin-top:12px; }
+  .lut-note { background:rgba(174,169,236,0.2); border:0.5px solid #AFA9EC; border-radius:7px; padding:8px 10px; font-size:11px; color:#3C3489; line-height:1.55; margin-bottom:10px; }
+
+  /* SUBMIT */
+  .submit-box { background:#fff; border:0.5px solid rgba(0,0,0,0.07); border-radius:16px; padding:1.5rem; display:flex; align-items:center; gap:1.25rem; }
+  .yt-icon { width:44px; height:44px; background:#FF0000; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .yt-play { width:0; height:0; border-top:10px solid transparent; border-bottom:10px solid transparent; border-left:15px solid white; margin-left:3px; }
+  .submit-main { font-size:15px; font-weight:500; margin-bottom:3px; }
+  .submit-sub { font-size:12px; color:#888; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2.5rem 1.25rem 2rem; }
+    .hero-inner { max-width: 100%; }
+    .lens-ring { display: none; }
+    .two-col { grid-template-columns: 1fr; }
+    .section-card { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="film-strip"></div>
+    <div class="film-strip-bottom"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <div class="lens-ring"></div>
+    <div class="hero-inner">
+      <p class="hero-tag">Computer Applications · 9th Grade · ATS</p>
+      <h1 class="hero-title">Documentary<br>Film <span>in DaVinci</span><br>Resolve</h1>
+      <p class="hero-sub">Create a 5-minute documentary using DaVinci Resolve</p>
+      <div class="pills">
+        <span class="pill">5+ minutes</span>
+        <span class="pill">1 interview required</span>
+        <span class="pill accent">DaVinci Resolve</span>
+        <span class="pill">Fusion animation</span>
+        <span class="pill">YouTube upload</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="two-col">
+    <div class="info-card"><p class="lbl">Duration</p><p class="val">5 minutes or more</p></div>
+    <div class="info-card"><p class="lbl">Format</p><p class="val">Horizontal video</p></div>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="section-card">
+    <p class="section-label">Skills you will learn</p>
+    <div class="skills-grid">
+      <div class="skill-card"><div class="skill-icon">✂</div><p class="skill-name">Cut & merge</p><p class="skill-desc">Trim clips and join footage</p></div>
+      <div class="skill-card"><div class="skill-icon">T</div><p class="skill-name">Text & titles</p><p class="skill-desc">Add captions and graphics</p></div>
+      <div class="skill-card"><div class="skill-icon">⟷</div><p class="skill-name">Transitions</p><p class="skill-desc">Smooth cuts between scenes</p></div>
+      <div class="skill-card"><div class="skill-icon">♪</div><p class="skill-name">Audio</p><p class="skill-desc">Music, narration, sound FX</p></div>
+      <div class="skill-card"><div class="skill-icon">◑</div><p class="skill-name">LUTs</p><p class="skill-desc">Color grading your footage</p></div>
+      <div class="skill-card"><div class="skill-icon">↗</div><p class="skill-name">Export</p><p class="skill-desc">Horizontal & vertical versions</p></div>
+      <div class="skill-card highlight"><div class="skill-icon">✦</div><p class="skill-name">Fusion</p><p class="skill-desc">Animated lower third graphic</p></div>
+    </div>
+  </div>
+
+  <!-- TOPICS -->
+  <div class="section-card">
+    <p class="section-label">Topic ideas — choose one or pitch your own</p>
+    <div class="topics-grid">
+      <div class="topic-card"><p class="topic-num">Option 1</p><p class="topic-title">A Day in the Life of…</p><p class="topic-desc">Follow someone through their day. A student, a teacher, a family member.</p></div>
+      <div class="topic-card"><p class="topic-num">Option 2</p><p class="topic-title">Social Media & My Generation</p><p class="topic-desc">The influence of Instagram, TikTok, or Snapchat on daily life.</p></div>
+      <div class="topic-card"><p class="topic-num">Option 3</p><p class="topic-title">Life Without the Internet</p><p class="topic-desc">Interview students, parents, or teachers about life before constant connectivity.</p></div>
+      <div class="topic-card"><p class="topic-num">Option 4</p><p class="topic-title">The Rise of AI in Our Lives</p><p class="topic-desc">How ChatGPT, Alexa, and algorithms shape our routines.</p></div>
+      <div class="topic-card free"><p class="topic-num">Your idea</p><p class="topic-title">Pitch your own topic</p><p class="topic-desc">Have another idea? Get it approved and make it yours.</p></div>
+    </div>
+  </div>
+
+  <!-- REQUIREMENTS -->
+  <div class="section-card">
+    <p class="section-label">Requirements</p>
+    <ul class="reqs-list">
+      <li class="req-item"><span class="req-dot"></span><span>At least <strong>5 minutes</strong> of final edited video</span></li>
+      <li class="req-item"><span class="req-dot"></span><span>Must include at least <strong>one on-camera interview</strong></span></li>
+      <li class="req-item"><span class="req-dot"></span><span>Use <strong>DaVinci Resolve</strong> for all editing</span></li>
+      <li class="req-item"><span class="req-dot"></span><span>Apply a <strong>LUT downloaded from one of the free resource sites</strong> listed below — do not use the built-in LUTs from DaVinci Resolve</span></li>
+      <li class="req-item"><span class="req-dot"></span><span>Include <strong>background music</strong> or narration (or both)</span></li>
+      <li class="req-item"><span class="req-dot"></span><span>Final export must be <strong>horizontal (16:9)</strong></span></li>
+      <li class="req-item"><span class="req-dot purple"></span><span>Create an <strong>animated lower third in Fusion</strong> showing the interviewee's name and role — it must slide or fade in during the interview</span></li>
+    </ul>
+  </div>
+
+  <!-- FUSION -->
+  <div class="fusion-box">
+    <div class="fusion-header">
+      <span class="fusion-badge">New skill</span>
+      <p class="fusion-title">What is a lower third?</p>
+    </div>
+    <p class="fusion-desc">A lower third is the animated graphic that appears at the bottom of the screen during an interview, showing the person's name and title. You see these on news channels, documentaries, and YouTube videos all the time. You'll build yours from scratch inside DaVinci Resolve's Fusion page.</p>
+    <p class="sub-label">Steps to create it</p>
+    <ol class="fusion-steps">
+      <li class="fusion-step"><span class="step-num">1</span><span>Select your interview clip on the timeline and open the <strong>Fusion page</strong></span></li>
+      <li class="fusion-step"><span class="step-num">2</span><span>Add a <strong>Text+</strong> node — type the interviewee's name and role</span></li>
+      <li class="fusion-step"><span class="step-num">3</span><span>Add a <strong>Background</strong> node with a colored rectangle behind the text</span></li>
+      <li class="fusion-step"><span class="step-num">4</span><span>Use a <strong>Merge</strong> node to combine text, background, and video</span></li>
+      <li class="fusion-step"><span class="step-num">5</span><span>Add <strong>keyframes</strong> to animate the position or opacity so it slides/fades in and out</span></li>
+    </ol>
+    <p class="sub-label">Tutorial</p>
+    <a class="tut-link" href="https://www.youtube.com/watch?v=yG4IK-f3eHA" target="_blank">
+      <div class="yt-sm"><div class="yt-sm-play"></div></div>
+      <div>
+        <p class="tut-title">Easy Lower Third Graphics in Fusion Page</p>
+        <p class="tut-who">Ground Control · Short & direct — great for quick reference</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- EVALUATION -->
+  <div class="section-card">
+    <p class="section-label">Evaluation criteria</p>
+    <div class="rubric-list">
+      <div class="rubric-item"><span class="rubric-dot"></span>Creativity and originality of topic</div>
+      <div class="rubric-item"><span class="rubric-dot"></span>Quality of editing and use of DaVinci Resolve tools</div>
+      <div class="rubric-item"><span class="rubric-dot"></span>Clarity of message and structure</div>
+      <div class="rubric-item"><span class="rubric-dot"></span>Use of supporting visuals, music, and/or narration</div>
+      <div class="rubric-item"><span class="rubric-dot"></span>Effort and completeness</div>
+    </div>
+  </div>
+
+  <!-- RESOURCES -->
+  <div class="section-card">
+    <p class="section-label">Free resources</p>
+    <div class="resources-grid">
+      <div class="res-card">
+        <span class="res-category cat-music">Music</span>
+        <p class="res-name">Pixabay Music</p>
+        <p class="res-desc">Royalty-free tracks, no account needed</p>
+        <a class="res-link" href="https://pixabay.com/music/" target="_blank">pixabay.com/music</a>
+        <div class="res-block">
+          <p class="res-name">Free Music Archive</p>
+          <p class="res-desc">Licensed music for creative projects</p>
+          <a class="res-link" href="https://freemusicarchive.org" target="_blank">freemusicarchive.org</a>
+        </div>
+        <div class="res-block">
+          <p class="res-name">YouTube Audio Library</p>
+          <p class="res-desc">Free music & sound effects by Google</p>
+          <a class="res-link" href="https://studio.youtube.com" target="_blank">studio.youtube.com → Music</a>
+        </div>
+      </div>
+      <div class="res-card">
+        <span class="res-category cat-lut">LUTs</span>
+        <p class="lut-note">Download a .cube file and import via Project Settings → Color Management → Open LUT Folder</p>
+        <p class="res-name">The Resolve Store — CinematicX</p>
+        <p class="res-desc">30 free cinematic LUTs made for DaVinci Resolve</p>
+        <a class="res-link" href="https://theresolve.store/30-free-cinematicx-luts-for-davinci-resolve/" target="_blank">theresolve.store</a>
+        <div class="res-block">
+          <p class="res-name">Cinecolor.io</p>
+          <p class="res-desc">8 free .cube LUTs — great starter pack</p>
+          <a class="res-link" href="https://cinecolor.io/products/free-davinci-resolve-luts" target="_blank">cinecolor.io</a>
+        </div>
+        <div class="res-block">
+          <p class="res-name">SmallHD — Cinematic Looks</p>
+          <p class="res-desc">7 free LUTs inspired by popular film grades</p>
+          <a class="res-link" href="https://smallhd.com/blogs/community/free-3d-lut-pack-cinematic-looks-smallhd" target="_blank">smallhd.com</a>
+        </div>
+      </div>
+      <div class="res-card">
+        <span class="res-category cat-sfx">Sound FX</span>
+        <p class="res-name">Freesound</p>
+        <p class="res-desc">Huge library of community sound effects</p>
+        <a class="res-link" href="https://freesound.org" target="_blank">freesound.org</a>
+        <div class="res-block">
+          <p class="res-name">Mixkit</p>
+          <p class="res-desc">Free sound effects & music loops</p>
+          <a class="res-link" href="https://mixkit.co/free-sound-effects/" target="_blank">mixkit.co</a>
+        </div>
+      </div>
+      <div class="res-card">
+        <span class="res-category cat-footage">Stock Footage</span>
+        <p class="res-name">Pexels Videos</p>
+        <p class="res-desc">Free HD stock video clips</p>
+        <a class="res-link" href="https://www.pexels.com/videos/" target="_blank">pexels.com/videos</a>
+        <div class="res-block">
+          <p class="res-name">Pixabay Video</p>
+          <p class="res-desc">Royalty-free clips for any use</p>
+          <a class="res-link" href="https://pixabay.com/videos/" target="_blank">pixabay.com/videos</a>
+        </div>
+        <div class="res-block">
+          <p class="res-name">Coverr</p>
+          <p class="res-desc">Beautiful free video backgrounds</p>
+          <a class="res-link" href="https://coverr.co" target="_blank">coverr.co</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-box">
+    <div class="yt-icon"><div class="yt-play"></div></div>
+    <div>
+      <p class="submit-main">Upload to YouTube using your personal account</p>
+      <p class="submit-sub">Submit the video link when you're done</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
